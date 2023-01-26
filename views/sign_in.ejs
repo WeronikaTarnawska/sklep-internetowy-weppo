@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="style.css" rel="stylesheet">
+    <title>Rejestracja</title>
+</head>
+<body>
+    <div class="topnav">
+        <p>Sklep internetowy</p>
+        <a href="/login">Logowanie</a>
+        <a href="/items">Oferta</a>
+        <a href="/">Strona główna</a>
+      </div>
+
+      <div class="loginbox">
+        <form method="post">
+            <label for="name">Imię</label>
+            <input type="text" id="name" name="name" value="<%= name %>">
+
+            <label for="name">Nazwisko</label>
+            <input type="text" id="surname" name="surname" value="<%= surname %>">
+
+            <label for="login">Login</label>
+            <input type="text" id="login" name="login" value="<%= login %>">
+
+            <label for="password">Hasło</label>
+            <input type="password" id="password" name="password" value="<%= password %>">
+
+            <label for="confirmPassword">Potwierdź hasło</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" value="<%= confirmPassword %>">
+
+            <% if( message ) { %>
+                <div class="message">
+                    <%= message %>
+                </div>
+            <% } %>
+
+            <input type="submit" value="Zarejestruj">
+        </form>
+      </div>
+
+      
+    
+</body>
+</html>
