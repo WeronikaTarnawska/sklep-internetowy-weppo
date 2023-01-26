@@ -1,5 +1,6 @@
 body {
-    background-color: lightblue;
+    margin: 0;
+    background-color: white;
 }
 
 header {
@@ -9,7 +10,7 @@ header {
     font-family: 'Courier New', Courier, monospace;
     font-variant: small-caps;
     border: solid 5px white;
-    margin-bottom: 10px;
+    margin-bottom: 40px;
     margin-left: 20%;
     margin-right: 20%;
     margin-top: 40px;
@@ -20,3 +21,42 @@ div {
     font-family: 'Courier New', Courier, monospace;
     font-size: medium;
 }
+
+.topnav {
+    position: fixed;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+    background-color:lightsteelblue;
+}
+
+.topnav a {
+    float: right;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    font-size: 40px;
+    text-decoration: none;
+}
+
+.topnav a:hover {
+    background-color: lightslategray;
+    color: black;
+}
+
+.topnav a.active {
+    background-color: darkblue;
+    color: white;
+}
+
+.topnav p {
+    color: black;
+    text-align: left;
+    padding: 14px 16px;
+    font-size: 60px;
+    text-decoration: none;
+    display: inline;
+    font-variant: small-caps;
+}
+
+
