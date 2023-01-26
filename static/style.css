@@ -24,10 +24,11 @@ div {
 
 .topnav {
     position: fixed;
+    top: 0;
     width: 100%;
     margin: 0;
     overflow: hidden;
-    background-color:lightsteelblue;
+    background-color: lightsteelblue;
 }
 
 .topnav a {
@@ -59,4 +60,46 @@ div {
     font-variant: small-caps;
 }
 
+.loginbox {
+    background-color: rgb(167, 173, 179);
+    color: black;
+    font-size: 20px;
+    padding: 20px;
+    margin-top: 10%;
+    width: 50%;
+    height: 50%;
+    margin-left: 25%;
 
+}
+
+.loginbox input[type=text], input[type=password],select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.loginbox input[type=submit] {
+    width: 100%;
+    background-color: lightsteelblue;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+.message {
+    margin: 8px;
+    width: 50%;
+    padding: 14px 20px;
+    padding-left: 16px;
+    color: red;
+    background-color:gold;
+    text-align: center;
+    margin-left: 25%;
+}
