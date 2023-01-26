@@ -13,9 +13,10 @@ app.use(cookieParser());
 app.use(express.urlencoded({extended:true}));
 
 
-/*
-GetUser analizuje ciastka w req
-*/
+/**
+ * @param {request} req 
+ * @returns user z req.body.cookies lub undefined gdy nie został zdefiniowany
+ */
 
 function GetUser(req) {
     if( !req.cookies.user ) {
@@ -25,13 +26,37 @@ function GetUser(req) {
     }
 }
 
-/*
-AuthenticateUser dostaje login i hasło, sprawdza, czy dane zgadzają się w bazie
-zwraca obiekt User z bazy, jeśli tak lub undefined w przeciwnym przypadku
-*/
+/**
+ * @param {*} login 
+ * @param {*} password 
+ * @returns użytkownik z bazy, gdy login i password zgadzają się w bazie danych lub undefined w przeciwnym przypadku
+ */
+
 function AuthenticateUser(login, password) {
     return {login: 'user', name: 'Jan', surname: 'Kowalski', type: 'admin', cart: undefined};
 }
+
+/**
+ * @param {*} login 
+ * @returns true, jeśli użytkownik o takim loginie istnieje w bazie lub false w przeciwnym przypadku
+ */
+
+function LoginAlreadyExists(login) {
+    return false;
+}
+
+/**
+ * dodaje użytkownika do bazy danych
+ * @param {*} name 
+ * @param {*} surname 
+ * @param {*} login 
+ * @param {*} password 
+ */
+function AddUserToDatabase(name, surname, login, password) {
+    return;
+}
+
+
 
 app.get('/', (req, res) => {
     var user = GetUser(req);
@@ -63,6 +88,64 @@ app.post('/login', (req, res) => {
         }
     }
 
+});
+
+app.get('/sign_in', (req, res) => {
+    var user = GetUser(req);
+    if( user ) {
+        res.redirect('/');
+    } else {
+        res.render('sign_in', {
+            name: '', 
+            surname: '', 
+            login: '', 
+            password: '', 
+            confirmPassword: '', 
+            message: ''});
+    }
+});
+
+app.post('/sign_in', (req, res) => {
+    var name = req.body.name;
+    var surname = req.body.surname;
+    var login = req.body.surname;
+    var password = req.body.password;
+    var confirmPassword = req.body.confirmPassword;
+    if( !name || !surname || !login || !password || !confirmPassword ){
+        res.render('sign_in', {
+            name: name, 
+            surname: surname, 
+            login: login, 
+            password: password, 
+            confirmPassword: confirmPassword, 
+            message: "Uzupełnij wszystkie pola."});
+    }
+    else if( LoginAlreadyExists( login ) ) {
+        res.render('sign_in', {
+            name: name, 
+            surname: surname, 
+            login: login, 
+            password: password, 
+            confirmPassword: confirmPassword, 
+            message: "Podany login jest już zajęty."});
+    } else if( password != confirmPassword ) {
+        res.render('sign_in', {
+            name: name, 
+            surname: surname, 
+            login: login, 
+            password: password, 
+            confirmPassword: confirmPassword, 
+            message: "Podane hasła są różne."});
+    } else {
+        AddUserToDatabase( name, surname, login, password );
+        res.render('sign_in', {
+            name: '', 
+            surname: '', 
+            login: '', 
+            password: '', 
+            confirmPassword: '', 
+            message: "Zarejestrowano pomyślnie. Zaloguj się, aby kontynuować."});
+    }
 });
 
 
