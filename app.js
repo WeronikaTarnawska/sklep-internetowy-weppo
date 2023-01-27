@@ -153,6 +153,15 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
+app.get('/items', (req, res) => {
+    var user = GetUser(req);
+    res.render('items', {user: user});
+});
+
+app.get('/cart', (req, res) => {
+    var user = GetUser (req);
+    res.render('cart', {user: user});
+});
 
 http.createServer( app ).listen( 3000 );
 console.log( 'started' );
