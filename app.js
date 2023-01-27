@@ -108,7 +108,7 @@ app.get('/sign_in', (req, res) => {
 app.post('/sign_in', (req, res) => {
     var name = req.body.name;
     var surname = req.body.surname;
-    var login = req.body.surname;
+    var login = req.body.login;
     var password = req.body.password;
     var confirmPassword = req.body.confirmPassword;
     if( !name || !surname || !login || !password || !confirmPassword ){
