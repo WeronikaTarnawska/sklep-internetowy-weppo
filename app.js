@@ -1,14 +1,14 @@
 var http = require( 'http' );
 var express = require( 'express' );
 var pg = require( 'pg' );
-var cookieParser = require('cookie-parser');
+var cookieParser = require( 'cookie-parser' );
 
 var app = express();
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
-app.use( express.static( "./static" ) );
+app.use(express.static("./static"));
 app.use(cookieParser());
 app.use(express.urlencoded({extended:true}));
 
@@ -140,12 +140,17 @@ app.post('/sign_in', (req, res) => {
         AddUserToDatabase( name, surname, login, password );
         res.render('sign_in', {
             name: '', 
-            surname: '', 
+            surname: '',    
             login: '', 
             password: '', 
             confirmPassword: '', 
             message: "Zarejestrowano pomyślnie. Zaloguj się, aby kontynuować."});
     }
+});
+
+app.get('/logout', (req, res) => {
+    res.cookie('user', undefined, {maxAge: -1});
+    res.redirect('/');
 });
 
 
