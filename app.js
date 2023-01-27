@@ -160,7 +160,11 @@ app.get('/items', (req, res) => {
 
 app.get('/cart', (req, res) => {
     var user = GetUser (req);
-    res.render('cart', {user: user});
+    if( !user || user.type != 'user' ) {
+        res.render('error');
+    } else {
+        res.render('cart', {user: user});
+    }
 });
 
 http.createServer( app ).listen( 3000 );
