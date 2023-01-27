@@ -63,25 +63,25 @@ app.get('/', (req, res) => {
     res.render('index', {user: user});
 });
 
-app.get('/login', (req, res) => {
+app.get('/log_in', (req, res) => {
     var user = GetUser(req);
     if( user ) {
         res.redirect('/');
     } else {
-        res.render('login', {login: '', password: '', message: ''});
+        res.render('log_in', {login: '', password: '', message: ''});
     }
 });
 
-app.post('/login', (req, res) => {
+app.post('/log_in', (req, res) => {
     var login = req.body.login;
     var password = req.body.password;
 
     if( !login || !password ) {
-        res.render('login', {login: login, password: password, message: "Uzupełnij login i hasło"});
+        res.render('log_in', {login: login, password: password, message: "Uzupełnij login i hasło"});
     } else {
         var user = AuthenticateUser(login, password);
         if( !user ) {
-            res.render('login', {login: login, password: password, message: "Niepoprawny login lub hasło"});
+            res.render('log_in', {login: login, password: password, message: "Niepoprawny login lub hasło"});
         } else {
             res.cookie('user', user);
             res.redirect('/');
