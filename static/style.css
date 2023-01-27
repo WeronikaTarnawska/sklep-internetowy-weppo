@@ -128,3 +128,54 @@ div {
     cursor: pointer;
     text-decoration: none;
 }
+
+.column1 {
+    float: left;
+    width: 100%;
+    /* padding-left: px; */
+    padding-top: 10%;
+    text-align: center;
+}
+
+.column2 {
+    float: left;
+    width: 50%;
+    /* padding-left: px; */
+    padding-top: 10%;
+    text-align: center;
+}
+
+.column3 {
+    float: left;
+    width: 33.33%;
+    padding-top: 15%;
+    text-align: center;
+}
+
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.mylink {
+    font-size: 50px;
+    display: block;
+    color: darkblue;
+}
+
+.mylink a {
+    text-decoration: none;
+    color: darkblue;
+
+}
+
+.mylink a:hover {
+    background-color: lightgrey;
+    color: black;
+}
+
+/* .mylink a.active {
+    background-color: darkblue;
+    color: white;
+} */
