@@ -175,7 +175,13 @@ div {
     color: black;
 }
 
-/* .mylink a.active {
-    background-color: darkblue;
-    color: white;
-} */
+.error {
+    margin-top: 20%;
+    width: 70%;
+    margin-left: 15%;
+    font-size: 100px;
+    color: firebrick; 
+    text-align: center;
+    border: solid 5px firebrick;
+    border-radius: 10px;
+}
