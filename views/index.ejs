@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <title>Sklep</title>
 </head>
 <body>
@@ -13,11 +14,61 @@
         <% if( user && user.type ) {%>
             <a href="/logout">Wyloguj</a>
         <%} else {%>
-            <a href="/login">Logowanie</a>
+            <a href="/log_in">Logowanie</a>
         <% } %>
         <a href="/items">Oferta</a>
         <a class="active" href="/">Strona główna</a>
       </div>
 
+    <% if( !user ) { %>
+        <div class="row">
+            <div class="mylink">
+                    <div class="column1">
+                        <a href="/items">
+                            <i class="material-icons" style="font-size:500px;"">view_list</i>
+                            <p style="font-size: 50px;">Oferta</p>
+                        </a>
+                    </div>
+            </div>            
+        </div>
+
+    <% } else if( user.type == 'user' ) { %>
+        <div class="row">
+            <div class="column2 mylink">
+                <a href="/items">
+                    <i class="material-icons" style="font-size:500px;"">view_list</i>
+                    <p style="font-size: 50px;">Oferta</p>
+                </a>
+            </div>
+            <div class="column2 mylink">
+                <a href="/cart">
+                    <i class="material-icons" style="font-size:500px;"">shopping_cart</i>
+                    <p style="font-size: 50px;">Koszyk</p>
+                </a> 
+            </div>
+        </div>
+    <% } else { %>    
+        <div class="row">
+            <div class="column3 mylink">
+                <a href="/items">
+                    <i class="material-icons" style="font-size:330px;"">view_list</i>
+                    <p style="font-size: 50px;">Oferta</p>
+                </a>
+            </div>
+            <div class="column3 mylink">
+                <a href="/orders">
+                    <i class="material-icons" style="font-size:330px;"">assignment</i>
+                    <p style="font-size: 50px;">Zamówienia</p>
+                </a> 
+            </div>
+            <div class="column3 mylink">
+                <a href="/users">
+                    <i class="material-icons" style="font-size:330px;"">people</i>
+                    <p style="font-size: 50px;">Użytkownicy</p>
+                </a> 
+            </div>
+        </div>
+
+    <% } %>
 </body>
 </html>
