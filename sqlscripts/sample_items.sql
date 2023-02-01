@@ -19,11 +19,20 @@ values ('tost z keczupem :)', 5.0, '...', 'other', null);
 insert into users (login, user_name, user_surname, user_type, cur_order_id)
 values ('werka666', 'werka', 'werka', 'admin', null);
 
+-- insert into passwords (login, password)
+-- values ('werka666', 'tosty<3');
+
 insert into users (login, user_name, user_surname, user_type, cur_order_id)
 values ('werka123', 'werka', 'werka', 'user', null);
 
+-- insert into passwords (login, password)
+-- values ('werka123', 'tosty<3');
+
 insert into users (login, user_name, user_surname, user_type, cur_order_id)
 values ('jan123', 'Jan', 'Kowalski', 'user', null);
+
+-- insert into passwords (login, password)
+-- values ('jan123', 'supertajnehaslo');
 
 
 
