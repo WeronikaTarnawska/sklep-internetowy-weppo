@@ -2,7 +2,7 @@ var http = require( 'http' );
 var express = require( 'express' );
 var pg = require( 'pg' );
 var cookieParser = require( 'cookie-parser' );
-
+var db = require('./db.js');
 var app = express();
 
 app.set('view engine', 'ejs');
