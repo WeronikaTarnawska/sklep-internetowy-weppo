@@ -14,8 +14,9 @@ app.use(express.urlencoded({extended:true}));
 
 
 /**
+ * zwraca user z req.body.cookies lub undefined gdy nie został zdefiniowany
  * @param {request} req 
- * @returns user z req.body.cookies lub undefined gdy nie został zdefiniowany
+ * @returns object
  */
 
 function GetUser(req) {
@@ -27,9 +28,10 @@ function GetUser(req) {
 }
 
 /**
+ * zwraca użytkownika z bazy, gdy login i password zgadzają się w bazie danych lub undefined w przeciwnym przypadku
  * @param {*} login 
  * @param {*} password 
- * @returns użytkownik z bazy, gdy login i password zgadzają się w bazie danych lub undefined w przeciwnym przypadku
+ * @returns object
  */
 
 function AuthenticateUser(login, password) {
@@ -37,8 +39,9 @@ function AuthenticateUser(login, password) {
 }
 
 /**
+ * zwraca true, jeśli użytkownik o takim loginie istnieje w bazie lub false w przeciwnym przypadku
  * @param {*} login 
- * @returns true, jeśli użytkownik o takim loginie istnieje w bazie lub false w przeciwnym przypadku
+ * @returns boolean
  */
 
 function LoginAlreadyExists(login) {
@@ -159,7 +162,7 @@ app.get('/items', (req, res) => {
 });
 
 app.get('/cart', (req, res) => {
-    var user = GetUser (req);
+    var user = GetUser(req);
     if( !user || user.type != 'user' ) {
         res.render('error');
     } else {
