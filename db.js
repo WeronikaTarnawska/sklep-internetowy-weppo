@@ -1,9 +1,24 @@
 var pg = require('pg');
+var bcrypt = require('bcrypt');
+var saltRounds = 10
 
 class UserRepository {
     constructor(pool) {
         this.pool = pool;
     }
+
+    async check_exists(login) {
+        try {
+            var result = await pool.query('select * from users where login = $1', [login]);
+            if (result.rowCount > 0) { return true; }
+            return false;
+        }
+        catch (err) {
+            console.log(err);
+            return [];
+        }
+    }
+
     async retrieve(login = null) {
         try {
             if (login) {
@@ -22,6 +37,7 @@ class UserRepository {
             return [];
         }
     }
+
     async insert(login, user_name, user_surname, user_type, cur_order_id = null) {
         if (!login) return;
         try {
@@ -31,6 +47,7 @@ class UserRepository {
                 return null;
             }
             else {
+                // TODO hash password and add it to passwords table 
                 var result = await pool.query('insert into users (login, user_name, user_surname, user_type, cur_order_id) values ($1, $2, $3, $4, $5)', [login, user_name, user_surname, user_type, cur_order_id]);
                 return login;
             }
@@ -315,10 +332,51 @@ class ItemOrderRepository {
     }
 }
 
-class CartRepository {
+class PasswordRepository {
     constructor(pool) {
         this.pool = pool;
     }
+
+    async insert(login, password) {
+        try {
+            var hash = await bcrypt.hash(password, saltRounds);
+            var result = await pool.query('insert into passwords (login, password) values ($1, $2)', [login, hash]);
+            return hash;
+        }
+        catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
+
+    async validate(login, password) {
+        try {
+            var res = await pool.query('select * from passwords where login = $1', [login]);
+            var hash = res.rows[0].password;
+            var ok = await bcrypt.compare(password, hash);
+            return ok;
+        }
+        catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
+}
+
+/* operations that require manipulating multiple tables: add_user, add_to_cart, remove_from_cart, submit_order */
+class CommonRepository {
+
+    async add_user(login, password, user_name, user_surname, user_type, cur_order_id = null) {
+        try {
+            await users_repo.insert(login, password, user_name, user_surname, user_type, cur_order_id = null);
+            await passwords_repo.insert(login, password);
+        }
+        catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
+
     async add_to_cart(user_login, item_id) {
         try {
             var res = await users_repo.retrieve(user_login);
@@ -385,6 +443,25 @@ var users_repo = new UserRepository(pool);
 var items_repo = new ItemRepository(pool);
 var orders_repo = new OrderRepository(pool);
 var item_order_repo = new ItemOrderRepository(pool);
-var cart_repo = new CartRepository(pool);
+var passwords_repo = new PasswordRepository(pool);
+var common_repo = new CommonRepository(pool);
 
-module.exports = {cart_repo, users_repo, items_repo, item_order_repo, orders_repo };
+module.exports = { common_repo, users_repo, items_repo, item_order_repo, orders_repo, passwords_repo };
+
+
+async function tests() {
+    var r;
+    // await users_repo.insert("alamakota", "alama", "kota", "user", null);
+    await passwords_repo.insert("alamakota", "kotmaale");
+    await passwords_repo.insert("werka666", "tosty<3");
+    await passwords_repo.insert("werka123", "tosty<3");
+    await passwords_repo.insert("jan123", "xd");
+
+    r = await passwords_repo.validate("alamakota", "xd");
+    console.log(r);
+
+    r = await passwords_repo.validate("alamakota", "kotmaale");
+    console.log(r);
+
+}
+// tests();
