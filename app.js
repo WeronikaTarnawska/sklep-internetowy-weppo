@@ -34,8 +34,16 @@ function GetUser(req) {
  * @returns object
  */
 
-function AuthenticateUser(login, password) {
-    return {login: 'user', name: 'Jan', surname: 'Kowalski', type: 'admin', cart: undefined};
+async function AuthenticateUser(login, password) {
+    var valid = await db.passwords_repo.validate(login, password);
+    console.log(valid);
+    if(valid){
+    console.log(valid);
+
+        var res = await db.users_repo.retrieve(login);
+        return res[0];
+    }
+    // return {login: 'user', name: 'Jan', surname: 'Kowalski', type: 'admin', cart: undefined};
 }
 
 /**
@@ -44,8 +52,9 @@ function AuthenticateUser(login, password) {
  * @returns boolean
  */
 
-function LoginAlreadyExists(login) {
-    return false;
+async function LoginAlreadyExists(login) {
+    var result = await db.users_repo.check_exists(login);
+    return result;
 }
 
 /**
@@ -55,7 +64,8 @@ function LoginAlreadyExists(login) {
  * @param {*} login 
  * @param {*} password 
  */
-function AddUserToDatabase(name, surname, login, password) {
+async function AddUserToDatabase(name, surname, login, password) {
+    await db.common_repo.add_user(login, password, name, surname, 'user', null);
     return;
 }
 
@@ -75,17 +85,18 @@ app.get('/log_in', (req, res) => {
     }
 });
 
-app.post('/log_in', (req, res) => {
+app.post('/log_in', async (req, res) => {
     var login = req.body.login;
     var password = req.body.password;
 
     if( !login || !password ) {
         res.render('log_in', {login: login, password: password, message: "Uzupełnij login i hasło"});
     } else {
-        var user = AuthenticateUser(login, password);
+        var user = await AuthenticateUser(login, password);
         if( !user ) {
             res.render('log_in', {login: login, password: password, message: "Niepoprawny login lub hasło"});
         } else {
+            console.log(':(');
             res.cookie('user', user);
             res.redirect('/');
         }
@@ -108,7 +119,7 @@ app.get('/sign_in', (req, res) => {
     }
 });
 
-app.post('/sign_in', (req, res) => {
+app.post('/sign_in', async (req, res) => {
     var name = req.body.name;
     var surname = req.body.surname;
     var login = req.body.login;
@@ -123,7 +134,7 @@ app.post('/sign_in', (req, res) => {
             confirmPassword: confirmPassword, 
             message: "Uzupełnij wszystkie pola."});
     }
-    else if( LoginAlreadyExists( login ) ) {
+    else if(await LoginAlreadyExists( login ) ) {
         res.render('sign_in', {
             name: name, 
             surname: surname, 
@@ -140,7 +151,7 @@ app.post('/sign_in', (req, res) => {
             confirmPassword: confirmPassword, 
             message: "Podane hasła są różne."});
     } else {
-        AddUserToDatabase( name, surname, login, password );
+        await AddUserToDatabase( name, surname, login, password );
         res.render('sign_in', {
             name: '', 
             surname: '',    
