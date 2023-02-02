@@ -69,10 +69,21 @@ async function AddUserToDatabase(name, surname, login, password) {
     return;
 }
 
+/**
+ * zwraca koszyk użytkownika o danym loginie
+ * @param {*} login 
+ * @returns object
+ */
+async function GetCart(login) { 
+    var cart = await db.users_repo.view_cart(login);
+    return cart;
+}
+
 
 
 app.get('/', (req, res) => {
     var user = GetUser(req);
+    if(user) console.log('Login: ', user.login);
     res.render('index', {user: user});
 });
 
@@ -174,10 +185,11 @@ app.get('/items', (req, res) => {
 
 app.get('/cart', (req, res) => {
     var user = GetUser(req);
-    if( !user || user.type != 'user' ) {
+    if( !user || user.user_type != 'user' ) {
         res.render('error');
     } else {
-        res.render('cart', {user: user});
+        var cart = GetCart(user.login);
+        res.render('cart', {user: user, cart: cart});
     }
 });
 
