@@ -205,7 +205,7 @@ app.get('/change_item/:id', (req, res) => {
     var id = req.params.id;
     var user = GetUser(req);
     if( !user || user.user_type!='admin' ) {
-        res.render('error');
+        res.render('error', {user: user});
     } else {
         res.render('change_item', {user: user});
     }
@@ -214,7 +214,7 @@ app.get('/change_item/:id', (req, res) => {
 app.get('/cart', (req, res) => {
     var user = GetUser(req);
     if( !user || user.user_type != 'user' ) {
-        res.render('error');
+        res.render('error', {user: user});
     } else {
         var cart = GetCart(user.login);
         res.render('cart', {user: user, cart: cart});
