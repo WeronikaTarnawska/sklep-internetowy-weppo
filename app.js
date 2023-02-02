@@ -185,6 +185,32 @@ app.get('/items', (req, res) => {
     })();
 });
 
+app.post('/items/add_to_cart/:id', (req, res) => {
+    (async () => {
+        var id = req.params.id;
+        console.log(id);
+        var user = GetUser(req);
+        await db.common_repo.add_to_cart(user.login, id);
+        var items = await db.items_repo.retrieve();
+        res.redirect('/items');
+    })();
+});
+
+app.post('/items/change_item/:id', (req, res) => {
+    var id = req.params.id;
+    res.redirect('/change_item/'+id);
+});
+
+app.get('/change_item/:id', (req, res) => {
+    var id = req.params.id;
+    var user = GetUser(req);
+    if( !user || user.user_type!='admin' ) {
+        res.render('error');
+    } else {
+        res.render('change_item', {user: user});
+    }
+})
+
 app.get('/cart', (req, res) => {
     var user = GetUser(req);
     if( !user || user.user_type != 'user' ) {
