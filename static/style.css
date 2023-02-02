@@ -188,6 +188,7 @@ div {
 
 
 table.items {
+    font-family: 'Courier New', Courier, monospace;
     padding: 0;
     text-align: left;
     font-size: 30px;
@@ -211,22 +212,11 @@ table.items tr:hover {
     background-color: lightgrey;
 }
 
-ul {
-    margin-top: 20%;
-    list-style-type: none;
-    text-align: center;
-    font-size: 30px;
-    border: 2px solid #ddd;
-    width: 70%;
-    margin-left: 15%;
-    padding: 0;
-}
-
-ul li {
-    padding: 8px 16px;
-    border-bottom: 2px solid #ddd;
-}
-
-ul li:last-child {
-    border-bottom: none
+.mybutton {
+    text-decoration: none;
+    border: 0.2px solid #000;
+    color: #000;
+    background: #e6e4e4;
+    padding: 5px;
+    border-radius: 1px;
 }
