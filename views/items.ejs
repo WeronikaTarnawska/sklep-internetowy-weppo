@@ -44,11 +44,15 @@
                     <% if( user ) { 
                         if( user.user_type == 'user' ) { %>
                             <td style="text-align: center;">
-                                <button style="font-size:24px">Dodaj <i class="material-icons">add_shopping_cart</i></button>
+                                <form action="/items/add_to_cart/<%=id%>" method="post">
+                                    <button class="mybutton" style="font-size:24px" id="btn<%=id%>" type="submit">Dodaj <i class="material-icons">add_shopping_cart</i></button>
+                                </form>  
                             </td>
                         <% } else { %>
                             <td>
-                                <button style="font-size:24px">Edytuj <i class="material-icons">mode_edit</i></button>
+                                <form action="/items/change_item/<%=id%>" method="post">
+                                    <button class="mybutton" style="font-size:24px" id="editbtn<%=id%>">Edytuj <i class="material-icons">mode_edit</i></button>
+                                </form>
                             </td>
                         <% }
                     } %>
