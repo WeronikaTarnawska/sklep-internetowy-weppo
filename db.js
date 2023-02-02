@@ -368,7 +368,7 @@ class CommonRepository {
 
     async add_user(login, password, user_name, user_surname, user_type, cur_order_id = null) {
         try {
-            await users_repo.insert(login, password, user_name, user_surname, user_type, cur_order_id = null);
+            await users_repo.insert(login, user_name, user_surname, user_type, cur_order_id = null);
             await passwords_repo.insert(login, password);
         }
         catch (err) {
