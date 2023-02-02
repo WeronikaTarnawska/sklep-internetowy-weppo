@@ -83,7 +83,6 @@ async function GetCart(login) {
 
 app.get('/', (req, res) => {
     var user = GetUser(req);
-    if(user) console.log('Login: ', user.login);
     res.render('index', {user: user});
 });
 
@@ -179,8 +178,11 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/items', (req, res) => {
-    var user = GetUser(req);
-    res.render('items', {user: user});
+    (async () => {
+        var user = GetUser(req);
+        var items = await db.items_repo.retrieve();
+        res.render('items', {user: user, items: items});
+    })();
 });
 
 app.get('/cart', (req, res) => {

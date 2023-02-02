@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>Oferta</title>
 </head>
 <body>
@@ -18,6 +19,42 @@
         <a class="active" href="/items">Oferta</a>
         <a href="/">Strona główna</a>
     </div>
-    
+    <div>
+        <table class="items">
+            <tr>
+                <th>Nazwa</th>
+                <th>Cena</th>
+                <th>Kategoria</th>
+                <th>Więcej</th>
+                <% if( user ) { 
+                    if( user.user_type == 'user' ) { %>
+                        <th>Do koszyka</th>
+                    <% } else { %>
+                        <th>Edycja</th>
+                    <% }
+                } %>
+            </tr>
+            <% items.forEach(r => { %>
+                <tr>
+                    <td><%= r.product_name %></td>
+                    <td><%= r.price %></td>
+                    <td><%= r.category %></td>
+                    <% var id = r.id; %>
+                    <td><a style="color: darkblue;" href="/items/<%=id%>">Opis</a></td>
+                    <% if( user ) { 
+                        if( user.user_type == 'user' ) { %>
+                            <td style="text-align: center;">
+                                <button style="font-size:24px">Dodaj <i class="material-icons">add_shopping_cart</i></button>
+                            </td>
+                        <% } else { %>
+                            <td>
+                                <button style="font-size:24px">Edytuj <i class="material-icons">mode_edit</i></button>
+                            </td>
+                        <% }
+                    } %>
+                </tr>
+            <% }) %>
+        </table>
+    </div>
 </body>
 </html>
