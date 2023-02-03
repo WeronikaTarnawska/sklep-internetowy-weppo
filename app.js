@@ -291,12 +291,22 @@ app.get('/cart', async (req, res) => {
     }
 });
 
+app.post('/submit_order', async (req, res) => {
+    var user = GetUser(req);
+    if( !user || user.user_type!='user' ){
+         res.render('error', {user: user});
+    } else {
+        await db.common_repo.submit_order(user.login);
+        res.redirect('/cart');
+    }
+});
+
 app.get('/orders', async (req, res) => {
     var user = GetUser(req);
     if( !user || user.user_type!='admin' ) {
         res.render('error', {user: user});
     } else {
-        var orders = await db.orders_repo.retrieve();
+        var orders = await db.orders_repo.view_orders();
         res.render('orders', {user: user, orders: orders});
     }
 });
@@ -306,7 +316,7 @@ app.get('/users', async (req, res) => {
     if( !user || user.user_type!='admin' ) {
         res.render('error', {user: user});
     } else {
-        var users = await db.users_repo.retrieve();
+        var users = await db.users_repo.view_users();
         res.render('users', {user: user, users: users});
     }
 });
