@@ -182,7 +182,14 @@ app.get('/logout', (req, res) => {
 app.get('/items', async (req, res) => {
     var user = GetUser(req);
     var items = await db.items_repo.retrieve();
-    res.render('items', {user: user, items: items});     
+    res.render('items', {user: user, items: items, search: ''});     
+});
+
+app.post('/items', async (req, res) => {
+    var user = GetUser(req);
+    var search = req.body.search;
+    var items = await db.items_repo.retrieve(null,search);
+    res.render('items', {user: user, search: search, items: items})
 });
 
 app.post('/items/add_to_cart/:id', async (req, res) => {
