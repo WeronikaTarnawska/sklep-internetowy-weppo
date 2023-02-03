@@ -9,6 +9,12 @@
     <title>Oferta</title>
 </head>
 <body>
+    <% const dict = {
+        't-shirt': 'Koszulka',
+        'mug': 'Kubek',
+        'sweatshirt': 'Bluza',
+        'other': 'Inne'
+    }; %>
     <div class="topnav">
         <p>Sklep internetowy</p>
         <% if( user && user.user_type ) {%>
@@ -38,7 +44,7 @@
                 <tr>
                     <td><%= r.product_name %></td>
                     <td><%= r.price %></td>
-                    <td><%= r.category %></td>
+                    <td><%= dict[r.category] %></td>
                     <% var id = r.id; %>
                     <td><a style="color: darkblue;" href="/items/<%=id%>">Opis</a></td>
                     <% if( user ) { 
