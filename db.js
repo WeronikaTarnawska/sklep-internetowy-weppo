@@ -151,7 +151,7 @@ class UserRepository {
     }
     async view_users() {
         try {
-            var res = await pool.query('select user_type, login, user_name, user_surname from users order by user_type');
+            var res = await pool.query('select user_type, login, user_name, user_surname from users order by user_type DESC');
             return res.rows;
         }
         catch (err) {
@@ -306,7 +306,8 @@ class OrderRepository {
     }
     async view_orders() {
         try {
-            var res = await pool.query('select orders.id, orders.order_date, users.login, sum(items.price) as total_price from users join orders on orders.user_id = users.login join item_order on item_order.order_id = orders.id join items on items.id = item_order.item_id where orders.order_date is not null group by orders.id, orders.order_date, users.login order by orders.id');
+            // var res = await pool.query('select orders.id, orders.order_date, users.login, sum(items.price) as total_price from users join orders on orders.user_id = users.login join item_order on item_order.order_id = orders.id join items on items.id = item_order.item_id where orders.order_date is not null group by orders.id, orders.order_date, users.login order by orders.id');
+            var res = await pool.query('select orders.id, orders.order_date, users.login, sum(items.price) as total_price from users join orders on orders.user_id = users.login join item_order on item_order.order_id = orders.id join items on items.id = item_order.item_id group by orders.id, orders.order_date, users.login order by orders.id');
             return res.rows;
         }
         catch (err) {
@@ -453,7 +454,7 @@ class CommonRepository {
     async submit_order(user_login) {
         try {
             var res = await users_repo.retrieve(user_login);
-            order_id = res[0].cur_order_id;
+            var order_id = res[0].cur_order_id;
             await orders_repo.timestamp(order_id);
             await users_repo.update_cur_order(user_login, null);
         }
