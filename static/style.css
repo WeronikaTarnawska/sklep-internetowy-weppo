@@ -217,3 +217,13 @@ table.items tr:hover {
     padding: 5px;
     border-radius: 1px;
 }
+
+.myheader {
+    font-size: 50px;
+    text-align: center;
+    margin-top: 10%;
+    width: 70%;
+    border: solid 2px darkblue;
+    margin-left: 15%;
+    /* margin-bottom: 10%; */
+}
