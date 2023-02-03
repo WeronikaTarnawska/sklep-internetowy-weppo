@@ -24,11 +24,19 @@
             <tr>
                 <th>ID zamówienia</th>
                 <th>Login użytkownika</th>
+                <th>Data złożenia zamówienia</th>
+                <th>Kwota</th>
             </tr>
             <% orders.forEach(r => { %>
                 <tr>
                     <td><%= r.id %></td>
-                    <td><%= r.user_id %></td>
+                    <td><%= r.login %></td>
+                    <% if( !r.order_date ) { %>
+                        <td></td>
+                    <% } else { %>
+                        <td><%= r.order_date.toLocaleDateString() %></td>
+                    <% } %>                    
+                    <td><%= r.total_price %></td>
                 </tr>
             <% }) %>
         </table>
