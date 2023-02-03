@@ -179,23 +179,19 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
-app.get('/items', (req, res) => {
-    (async () => {
-        var user = GetUser(req);
-        var items = await db.items_repo.retrieve();
-        res.render('items', {user: user, items: items});        
-    })();
+app.get('/items', async (req, res) => {
+    var user = GetUser(req);
+    var items = await db.items_repo.retrieve();
+    res.render('items', {user: user, items: items});     
 });
 
-app.post('/items/add_to_cart/:id', (req, res) => {
-    (async () => {
-        var id = req.params.id;
-        console.log(id);
-        var user = GetUser(req);
-        await db.common_repo.add_to_cart(user.login, id);
-        var items = await db.items_repo.retrieve();
-        res.redirect('/items');
-    })();
+app.post('/items/add_to_cart/:id', async (req, res) => {
+    var id = req.params.id;
+    console.log(id);
+    var user = GetUser(req);
+    await db.common_repo.add_to_cart(user.login, id);
+    var items = await db.items_repo.retrieve();
+    res.redirect('/items');
 });
 
 app.post('/items/change_item/:id', (req, res) => {
