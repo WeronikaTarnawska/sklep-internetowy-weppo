@@ -165,16 +165,35 @@ class ItemRepository {
     constructor(pool) {
         this.pool = pool;
     }
-    async retrieve(id = null, name = null, category = null) {
+    // async retrieve(id = null, name = null, category = null) {
+    //     try {
+    //         if (id) {
+    //             var result = await pool.query('select * from items where id = $1', [id]);
+    //         }
+    //         else if (name) {
+    //             var result = await pool.query('select * from items where product_name = $1', [name]);
+    //         }
+    //         else if (category) {
+    //             var result = await pool.query('select * from items where category = $1', [category]);
+    //         }
+    //         else {
+    //             var result = await pool.query('select * from items');
+    //         }
+    //         return result.rows;
+    //     }
+    //     catch (err) {
+    //         console.log(err);
+    //         return [];
+    //     }
+    // }
+
+    async retrieve(id = null, text = null) {
         try {
             if (id) {
                 var result = await pool.query('select * from items where id = $1', [id]);
             }
-            else if (name) {
-                var result = await pool.query('select * from items where product_name = $1', [name]);
-            }
-            else if (category) {
-                var result = await pool.query('select * from items where category = $1', [category]);
+            else if (text) {
+                var result = await pool.query("select * from items where product_name like $1 or description like $1", ["%"+text+"%"]);
             }
             else {
                 var result = await pool.query('select * from items');
@@ -186,6 +205,7 @@ class ItemRepository {
             return [];
         }
     }
+
     async insert(product_name, price, category, description = '', photo = null) {
         try {
             var exists = await pool.query('select * from items where product_name = $1', [product_name]);
