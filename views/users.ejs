@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/style.css" rel="stylesheet">
+    <title>Użytkownicy</title>
+</head>
+<body>
+    <div class="topnav">
+        <p>Sklep internetowy</p>
+        <% if( user && user.user_type ) {%>
+            <a href="/logout">Wyloguj</a>
+        <%} else {%>
+            <a href="/log_in">Logowanie</a>
+        <% } %>
+        <a href="/items">Oferta</a>
+        <a href="/">Strona główna</a>
+    </div>
+
+    <div>
+        <table class="items" style="margin-top: 5em;">
+            <tr>
+                <th>Login</th>
+                <th>Imię</th>
+                <th>Nazwisko</th>
+                <th>Typ użytkownika</th>
+                <th>ID aktualnego zamówienia</th>                
+            </tr>
+            <% users.forEach(r => { %>
+                <tr>
+                    <td><%= r.login %></td>
+                    <td><%= r.user_name %></td>
+                    <td><%= r.user_surname %></td>
+                    <td><%= r.user_type %></td>
+                    <td><%= r.cur_order_id %></td>
+                </tr>
+            <% }) %>
+        </table>
+    </div>
+    
+</body>
+</html>

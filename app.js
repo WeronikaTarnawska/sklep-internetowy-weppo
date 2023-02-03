@@ -291,6 +291,26 @@ app.get('/cart', async (req, res) => {
     }
 });
 
+app.get('/orders', async (req, res) => {
+    var user = GetUser(req);
+    if( !user || user.user_type!='admin' ) {
+        res.render('error', {user: user});
+    } else {
+        var orders = await db.orders_repo.retrieve();
+        res.render('orders', {user: user, orders: orders});
+    }
+});
+
+app.get('/users', async (req, res) => {
+    var user = GetUser(req);
+    if( !user || user.user_type!='admin' ) {
+        res.render('error', {user: user});
+    } else {
+        var users = await db.users_repo.retrieve();
+        res.render('users', {user: user, users: users});
+    }
+});
+
 http.createServer( app ).listen( 3000 );
 console.log( 'started' );
 
