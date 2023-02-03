@@ -76,7 +76,9 @@ async function AddUserToDatabase(name, surname, login, password) {
  */
 async function GetCart(login) { 
     var cart = await db.users_repo.view_cart(login);
-    return cart;
+    var total = await db.users_repo.sum_cart(login);
+    var cnt = await db.users_repo.count_cart(login);
+    return {cart: cart, total: total, cnt: cnt};
 }
 
 
@@ -212,13 +214,14 @@ app.get('/change_item/:id', (req, res) => {
     }
 })
 
-app.get('/cart', (req, res) => {
+app.get('/cart', async (req, res) => {
     var user = GetUser(req);
     if( !user || user.user_type != 'user' ) {
         res.render('error', {user: user});
     } else {
-        var cart = GetCart(user.login);
-        res.render('cart', {user: user, cart: cart});
+        var cart = await GetCart(user.login);
+        var [items, total, cnt] = [cart.cart, cart.total, cart.cnt];
+        res.render('cart', {user: user, items: items, total: total, cnt: cnt});
     }
 });
 

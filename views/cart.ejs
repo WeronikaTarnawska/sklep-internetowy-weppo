@@ -18,6 +18,46 @@
         <a href="/items">Oferta</a>
         <a href="/">Strona główna</a>
     </div>
+
+    <div class="myheader">
+        Koszyk
+    </div>
+
+    <table class="items" style="margin-top: 1em;">
+        <tr>
+            <th>Nazwa</th>
+            <th>Więcej</th>
+            <th>Liczba</th>
+            <th>Kwota</th>
+        </tr>
+        <% items.forEach(r => { %>
+            <tr>
+                <% var id = r.id; %>
+                <td><%= r.product_name %></td>
+                <td><a style="color: darkblue;" href="/items/<%=id%>">Opis</a></td>
+                <td> <%= r.cnt %> </td>
+                <td><%= r.sum %></td>
+            </tr>
+        <% }) %>
+    </table>
+    <div class="myheader">
+        Podsumowanie
+    </div>
+    <table class="items" style="margin-top: 1em;">
+        <tr>
+            <th>Łączna liczba przedmiotów</th>
+            <th>Łączna kwota</th>
+        </tr>
+        <tr>
+            <td>
+                <%= cnt %>
+            </td>
+            <td>
+                <%= total %>
+            </td>
+        </tr>
+        
+    </table>
     
 </body>
 </html>
