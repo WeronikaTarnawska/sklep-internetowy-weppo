@@ -132,7 +132,6 @@ div {
 .column1 {
     float: left;
     width: 100%;
-    /* padding-left: px; */
     padding-top: 10%;
     text-align: center;
 }
@@ -140,7 +139,6 @@ div {
 .column2 {
     float: left;
     width: 50%;
-    /* padding-left: px; */
     padding-top: 10%;
     text-align: center;
 }
@@ -204,7 +202,6 @@ table.items th {
 }
 
 table.items tr, td {
-    /* margin: 10px; */
     padding: 10px;
 }
 

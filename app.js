@@ -8,7 +8,7 @@ var app = express();
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
-app.use(express.static("./static"));
+app.use(express.static("static"));
 app.use(cookieParser());
 app.use(express.urlencoded({extended:true}));
 
@@ -181,7 +181,7 @@ app.get('/items', (req, res) => {
     (async () => {
         var user = GetUser(req);
         var items = await db.items_repo.retrieve();
-        res.render('items', {user: user, items: items});
+        res.render('items', {user: user, items: items});        
     })();
 });
 
@@ -198,6 +198,7 @@ app.post('/items/add_to_cart/:id', (req, res) => {
 
 app.post('/items/change_item/:id', (req, res) => {
     var id = req.params.id;
+    var user = GetUser(req);
     res.redirect('/change_item/'+id);
 });
 
