@@ -33,6 +33,14 @@
         </div>  
     </form>
 
+    <% if( user && user.user_type=='admin' ) { %>
+        <div class="addbutton">
+            <form action="/items/add_item" method="post">
+                <button class="addbutton" id="add">Dodaj nowy przedmiot</button>
+            </form>
+        </div>
+    <% } %>
+
     <div>
         <table class="items">
             <tr>

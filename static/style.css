@@ -213,9 +213,10 @@ table.items tr:hover {
     text-decoration: none;
     border: 0.2px solid #000;
     color: #000;
-    background: #e6e4e4;
+    background: #ddd;
     padding: 5px;
     border-radius: 1px;
+    cursor: pointer;
 }
 
 .myheader {
@@ -264,4 +265,22 @@ table.items tr:hover {
     font-size: 20px;
     border: 1px solid #ccc;  
   }
-  
+
+
+.addbutton button {
+    text-decoration: none;
+    border: none;
+    color: #000;
+    background: rgb(188, 205, 228);
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 40px;
+    margin-left: 33%;
+    padding: 15px;
+    width: 30%;
+}
+
+.addbutton button:hover {
+    background: rgb(177, 196, 223);
+}

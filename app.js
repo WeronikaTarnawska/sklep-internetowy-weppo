@@ -81,6 +81,19 @@ async function GetCart(login) {
     return {cart: cart, total: total, cnt: cnt};
 }
 
+/**
+ * sprawdza, czy produkt został właśnie dodany do bazy
+ * @param {*} product_name 
+ * @param {*} price 
+ * @param {*} category 
+ * @param {*} description 
+ * @returns boolean
+ */
+
+function IsNewItem(product_name, price, category, description){
+    return ( product_name=='PRODUCT_NAME' && price==1 && category=='other' && description=='');
+}
+
 
 
 app.get('/', (req, res) => {
@@ -217,10 +230,23 @@ app.get('/change_item/:id', async (req, res) => {
         if( !item ) {
             res.render('fail', {user: user, id: id});
         } else {
-            res.render('change_item', {user: user, item: item, message: ''});
+            if( IsNewItem(item.product_name, item.price, item.category, item.description )) {
+                res.render('change_item', {
+                    user: user,
+                    item: {
+                        product_name: '',
+                        price: '',
+                        description: '',
+                        category: ''
+                    },
+                    message: ''                    
+                });
+            } else {
+                res.render('change_item', {user: user, item: item, message: ''});
+            }
         }
     }
-})
+});
 
 app.post('/change_item/:id', async (req, res) => {
     var id = req.params.id;
@@ -246,7 +272,13 @@ app.post('/change_item/:id', async (req, res) => {
             message: ''
         });
     }
-})
+});
+
+app.post('/items/add_item', async (req, res) => {
+    var user = GetUser(req);
+    var id = await db.items_repo.insert('PRODUCT_NAME', 1, 'other', '');
+    res.redirect('/change_item/'+id)
+});
 
 app.get('/cart', async (req, res) => {
     var user = GetUser(req);
