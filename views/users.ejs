@@ -25,8 +25,7 @@
                 <th>Login</th>
                 <th>Imię</th>
                 <th>Nazwisko</th>
-                <th>Typ użytkownika</th>
-                <th>ID aktualnego zamówienia</th>                
+                <th>Typ użytkownika</th>        
             </tr>
             <% users.forEach(r => { %>
                 <tr>
@@ -34,7 +33,6 @@
                     <td><%= r.user_name %></td>
                     <td><%= r.user_surname %></td>
                     <td><%= r.user_type %></td>
-                    <td><%= r.cur_order_id %></td>
                 </tr>
             <% }) %>
         </table>
