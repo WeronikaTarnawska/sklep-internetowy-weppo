@@ -18,5 +18,30 @@
         <a href="/items">Oferta</a>
         <a href="/">Strona główna</a>
     </div>
+
+    <div class="loginbox">
+        <form method="post">
+            <label for="product_name">Nazwa</label>
+            <input type="text" id="product_name" name="product_name" value="<%= item.product_name %>">
+
+            <label for="price">Cena</label>
+            <input type="number" id="price" name="price" value="<%= item.price %>">
+
+            <label for="description">Opis</label>
+            <input type="text" id="description" name="description" value="<%= item.description %>">
+
+            <label for="category">Kategoria</label>
+            <%- include('select', { name: 'category', id: 'category', category: item.category} ) %>
+
+            <% if ( message ) { %>
+                <div class="message">
+                    <%= message %>
+                </div>
+            <% } %>
+
+            <input type="submit" value="Zapisz">
+        </form>
+    </div>
+
 </body>
 </html>

@@ -1,0 +1,15 @@
+<% const options = [
+    ["mug", "Kubek"],
+    ["t-shirt", "Koszulka"],
+    ["sweatshirt", "Bluza"],
+    ["other", "Inne"] ]; %>
+
+<select name='<%= name %>' id='<%= id %>'>
+    <% options.forEach( (option) => {
+        if( category == option[0] ) { %>
+            <option value="<%=option[0]%>" selected><%= option[1] %></option>
+        <% } else { %>
+            <option value="<%=option[0]%>"><%= option[1] %></option>
+        <% }
+    }) %>
+</select>

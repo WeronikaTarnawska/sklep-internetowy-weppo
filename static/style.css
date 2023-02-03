@@ -73,7 +73,7 @@ div {
 
 }
 
-.loginbox input[type=text], input[type=password],select {
+.loginbox input[type=text], input[type=number], input[type=password],select {
     width: 100%;
     padding: 12px 20px;
     font-size: 20px;

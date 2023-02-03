@@ -204,13 +204,44 @@ app.post('/items/change_item/:id', (req, res) => {
     res.redirect('/change_item/'+id);
 });
 
-app.get('/change_item/:id', (req, res) => {
+app.get('/change_item/:id', async (req, res) => {
     var id = req.params.id;
     var user = GetUser(req);
+    var item = (await db.items_repo.retrieve(id))[0];
     if( !user || user.user_type!='admin' ) {
         res.render('error', {user: user});
     } else {
-        res.render('change_item', {user: user});
+        if( !item ) {
+            res.render('fail', {user: user, id: id});
+        } else {
+            res.render('change_item', {user: user, item: item, message: ''});
+        }
+    }
+})
+
+app.post('/change_item/:id', async (req, res) => {
+    var id = req.params.id;
+    var user = GetUser(req);
+    var [product_name, price, description, category] = [req.body.product_name, req.body.price, req.body.description, req.body.category];
+    if( !product_name || !price || !description || !category ) {
+        res.render('change_item', {
+            user: user,
+            item: {
+                product_name: product_name,
+                price: price,
+                description: description,
+                category: category
+            },
+            message: 'Uzupełnij wszystkie pola'
+        });
+    } else {
+        var update = await db.items_repo.update(id, product_name, price, category, description);
+        var updated = (await db.items_repo.retrieve(update))[0];
+        res.render('change_item', {
+            user: user,
+            item: updated,
+            message: ''
+        });
     }
 })
 
