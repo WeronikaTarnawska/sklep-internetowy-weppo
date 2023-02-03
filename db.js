@@ -97,10 +97,22 @@ class UserRepository {
     //     }
     // }
 
+    // async view_cart(login) {
+    //     if (!login) return;
+    //     try {
+    //         var result = await pool.query('select item_order.id, items.product_name, items.description, items.category, items.price from users join orders on users.cur_order_id = orders.id join item_order on orders.id = item_order.order_id  join items on items.id = item_order.item_id  where users.login = $1', [login]);
+    //         return result.rows;
+    //     }
+    //     catch (err) {
+    //         console.log(err);
+    //         throw err;
+    //     }
+    // }
+
     async view_cart(login) {
         if (!login) return;
         try {
-            var result = await pool.query('select item_order.id, items.product_name, items.description, items.category, items.price from users join orders on users.cur_order_id = orders.id join item_order on orders.id = item_order.order_id  join items on items.id = item_order.item_id  where users.login = $1', [login]);
+            var result = await pool.query('select items.id, items.product_name, items.description, items.category, items.price, count(items.id) as cnt, sum(items.price) from users join orders on users.cur_order_id = orders.id join item_order on orders.id = item_order.order_id  join items on items.id = item_order.item_id  where users.login = $1 group by items.id', [login]);
             return result.rows;
         }
         catch (err) {
@@ -108,6 +120,7 @@ class UserRepository {
             throw err;
         }
     }
+
     async sum_cart(login) {
         if (!login) return;
         try {
@@ -126,10 +139,10 @@ class UserRepository {
         if (!login) return;
         try {
             var result = await pool.query('select count(items.id) as cnt from users join orders on users.cur_order_id = orders.id join item_order on orders.id = item_order.order_id  join items on items.id = item_order.item_id  where users.login = $1', [login]);
-            if (result.rows[0].total == null) {
+            if (result.rows[0].cnt == null) {
                 return 0;
             }
-            return result.rows[0].total;
+            return result.rows[0].cnt;
         }
         catch (err) {
             console.log(err);
