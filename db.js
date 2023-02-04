@@ -246,6 +246,16 @@ class ItemRepository {
             throw err;
         }
     }
+    async remove(id){
+        try {
+            var res = await pool.query('delete from items where id=$1 returning *', [id]);
+            return res.rows;
+        }
+        catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
 
 }
 
