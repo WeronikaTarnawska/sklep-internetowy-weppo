@@ -2,9 +2,23 @@ var http = require( 'http' );
 var express = require( 'express' );
 var pg = require( 'pg' );
 var cookieParser = require( 'cookie-parser' );
+var multer = require( 'multer' );
 var db = require('./db.js');
 var app = express();
 
+var multerStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'static/photos')
+    },
+    filename: function (req, file, cb) {
+        var ext = file.mimetype.split('/')[1];
+        cb(null, file.fieldname + '-' + Date.now() + '.' + ext);
+    }
+  })
+
+var upload = multer({
+    storage: multerStorage
+});
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
@@ -234,6 +248,7 @@ app.get('/change_item/:id', async (req, res) => {
                 res.render('change_item', {
                     user: user,
                     item: {
+                        id: id,
                         product_name: '',
                         price: '',
                         description: '',
@@ -256,6 +271,7 @@ app.post('/change_item/:id', async (req, res) => {
         res.render('change_item', {
             user: user,
             item: {
+                id: id,
                 product_name: product_name,
                 price: price,
                 description: description,
@@ -272,6 +288,14 @@ app.post('/change_item/:id', async (req, res) => {
             message: ''
         });
     }
+});
+
+app.post('/upload_photo/:id', upload.single('photo'), async (req, res) => {
+    var id = req.params.id;
+    var item = (await db.items_repo.retrieve(id))[0];
+    console.log(item);
+    await db.items_repo.update(id,item.product_name, item.price,item.category,item.description,req.file.path);
+    res.redirect('/');
 });
 
 app.post('/items/add_item', async (req, res) => {
