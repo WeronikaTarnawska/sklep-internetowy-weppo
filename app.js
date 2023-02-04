@@ -1,20 +1,20 @@
-var http = require( 'http' );
-var express = require( 'express' );
-var pg = require( 'pg' );
-var cookieParser = require( 'cookie-parser' );
-var multer = require( 'multer' );
+var http = require('http');
+var express = require('express');
+var pg = require('pg');
+var cookieParser = require('cookie-parser');
+var multer = require('multer');
 var db = require('./db.js');
 var app = express();
 
 var multerStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, 'static/photos')
+        cb(null, 'static/photos')
     },
     filename: function (req, file, cb) {
         var ext = file.mimetype.split('/')[1];
         cb(null, file.fieldname + '-' + Date.now() + '.' + ext);
     }
-  })
+})
 
 var upload = multer({
     storage: multerStorage
@@ -24,7 +24,7 @@ app.set('views', './views');
 
 app.use(express.static("static"));
 app.use(cookieParser());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 
 
 /**
@@ -34,7 +34,7 @@ app.use(express.urlencoded({extended:true}));
  */
 
 function GetUser(req) {
-    if( !req.cookies.user ) {
+    if (!req.cookies.user) {
         return undefined;
     } else {
         return req.cookies.user;
@@ -50,10 +50,7 @@ function GetUser(req) {
 
 async function AuthenticateUser(login, password) {
     var valid = await db.passwords_repo.validate(login, password);
-    console.log(valid);
-    if(valid){
-    console.log(valid);
-
+    if (valid) {
         var res = await db.users_repo.retrieve(login);
         return res[0];
     }
@@ -88,11 +85,11 @@ async function AddUserToDatabase(name, surname, login, password) {
  * @param {*} login 
  * @returns object
  */
-async function GetCart(login) { 
+async function GetCart(login) {
     var cart = await db.users_repo.view_cart(login);
     var total = await db.users_repo.sum_cart(login);
     var cnt = await db.users_repo.count_cart(login);
-    return {cart: cart, total: total, cnt: cnt};
+    return { cart: cart, total: total, cnt: cnt };
 }
 
 /**
@@ -104,23 +101,23 @@ async function GetCart(login) {
  * @returns boolean
  */
 
-function IsNewItem(product_name, price, category, description){
-    return ( product_name=='PRODUCT_NAME' && price==1 && category=='other' && description=='');
+function IsNewItem(product_name, price, category, description) {
+    return (product_name == 'PRODUCT_NAME' && price == 1 && category == 'other' && description == '');
 }
 
 
 
 app.get('/', (req, res) => {
     var user = GetUser(req);
-    res.render('index', {user: user});
+    res.render('index', { user: user });
 });
 
 app.get('/log_in', (req, res) => {
     var user = GetUser(req);
-    if( user ) {
+    if (user) {
         res.redirect('/');
     } else {
-        res.render('log_in', {login: '', password: '', message: ''});
+        res.render('log_in', { login: '', password: '', message: '' });
     }
 });
 
@@ -128,14 +125,13 @@ app.post('/log_in', async (req, res) => {
     var login = req.body.login;
     var password = req.body.password;
 
-    if( !login || !password ) {
-        res.render('log_in', {login: login, password: password, message: "Uzupełnij login i hasło"});
+    if (!login || !password) {
+        res.render('log_in', { login: login, password: password, message: "Uzupełnij login i hasło" });
     } else {
         var user = await AuthenticateUser(login, password);
-        if( !user ) {
-            res.render('log_in', {login: login, password: password, message: "Niepoprawny login lub hasło"});
+        if (!user) {
+            res.render('log_in', { login: login, password: password, message: "Niepoprawny login lub hasło" });
         } else {
-            console.log(':(');
             res.cookie('user', user);
             res.redirect('/');
         }
@@ -145,16 +141,17 @@ app.post('/log_in', async (req, res) => {
 
 app.get('/sign_in', (req, res) => {
     var user = GetUser(req);
-    if( user ) {
+    if (user) {
         res.redirect('/');
     } else {
         res.render('sign_in', {
-            name: '', 
-            surname: '', 
-            login: '', 
-            password: '', 
-            confirmPassword: '', 
-            message: ''});
+            name: '',
+            surname: '',
+            login: '',
+            password: '',
+            confirmPassword: '',
+            message: ''
+        });
     }
 });
 
@@ -165,80 +162,84 @@ app.post('/sign_in', async (req, res) => {
     var password = req.body.password;
     var confirmPassword = req.body.confirmPassword;
     var user = GetUser(req);
-    if( user ){
+    if (user) {
         res.redirect('/');
     } else {
-        if( !name || !surname || !login || !password || !confirmPassword ){
+        if (!name || !surname || !login || !password || !confirmPassword) {
             res.render('sign_in', {
-                name: name, 
-                surname: surname, 
-                login: login, 
-                password: password, 
-                confirmPassword: confirmPassword, 
-                message: "Uzupełnij wszystkie pola."});
+                name: name,
+                surname: surname,
+                login: login,
+                password: password,
+                confirmPassword: confirmPassword,
+                message: "Uzupełnij wszystkie pola."
+            });
         }
-        else if(await LoginAlreadyExists( login ) ) {
+        else if (await LoginAlreadyExists(login)) {
             res.render('sign_in', {
-                name: name, 
-                surname: surname, 
-                login: login, 
-                password: password, 
-                confirmPassword: confirmPassword, 
-                message: "Podany login jest już zajęty."});
-        } else if( password != confirmPassword ) {
+                name: name,
+                surname: surname,
+                login: login,
+                password: password,
+                confirmPassword: confirmPassword,
+                message: "Podany login jest już zajęty."
+            });
+        } else if (password != confirmPassword) {
             res.render('sign_in', {
-                name: name, 
-                surname: surname, 
-                login: login, 
-                password: password, 
-                confirmPassword: confirmPassword, 
-                message: "Podane hasła są różne."});
+                name: name,
+                surname: surname,
+                login: login,
+                password: password,
+                confirmPassword: confirmPassword,
+                message: "Podane hasła są różne."
+            });
         } else {
-            await AddUserToDatabase( name, surname, login, password );
+            await AddUserToDatabase(name, surname, login, password);
             res.render('sign_in', {
-                name: '', 
-                surname: '',    
-                login: '', 
-                password: '', 
-                confirmPassword: '', 
-                message: "Zarejestrowano pomyślnie. Zaloguj się, aby kontynuować."});
+                name: '',
+                surname: '',
+                login: '',
+                password: '',
+                confirmPassword: '',
+                message: "Zarejestrowano pomyślnie. Zaloguj się, aby kontynuować."
+            });
         }
     }
 });
 
 app.get('/logout', (req, res) => {
-    res.cookie('user', undefined, {maxAge: -1});
+    res.cookie('user', undefined, { maxAge: -1 });
     res.redirect('/');
 });
 
 app.get('/items', async (req, res) => {
     var user = GetUser(req);
     var items = await db.items_repo.retrieve();
-    res.render('items', {user: user, items: items, search: ''});     
+    res.render('items', { user: user, items: items, search: '' });
 });
 
 app.post('/items', async (req, res) => {
     var user = GetUser(req);
     var search = req.body.search;
-    var items = await db.items_repo.retrieve(null,search);
-    res.render('items', {user: user, search: search, items: items})
+    var items = await db.items_repo.retrieve(null, search);
+    res.render('items', { user: user, search: search, items: items })
 });
 
 app.get('/items/:id(\\d+)', async (req, res) => {
     var id = req.params.id;
     var user = GetUser(req);
     var item = (await db.items_repo.retrieve(id))[0];
-    if( !item ) {
-        res.render( 'fail', {user: user, id: id} );
+    if (!item) {
+        res.render('fail', { user: user, id: id });
     } else {
-        res.render( 'view_item', {user: user, item:item});
+        res.render('view_item', { user: user, item: item });
     }
 })
 
 app.post('/items/add_to_cart/:id(\\d+)', async (req, res) => {
     var id = req.params.id;
     var user = GetUser(req);
-    if( !user || user.user_type!='user' ) {
+    if (!user || user.user_type != 'user') {
         res.render('error');
     } else {
         await db.common_repo.add_to_cart(user.login, id);
@@ -250,10 +251,10 @@ app.post('/items/add_to_cart/:id(\\d+)', async (req, res) => {
 app.post('/items/change_item/:id(\\d+)', (req, res) => {
     var id = req.params.id;
     var user = GetUser(req);
-    if( !user || user.user_type!='admin' ) {
-        res.render('error', {user: user});
+    if (!user || user.user_type != 'admin') {
+        res.render('error', { user: user });
     } else {
-        res.redirect('/change_item/'+id);
+        res.redirect('/change_item/' + id);
     }
 });
 
@@ -261,13 +262,13 @@ app.get('/change_item/:id(\\d+)', async (req, res) => {
     var id = req.params.id;
     var user = GetUser(req);
     var item = (await db.items_repo.retrieve(id))[0];
-    if( !user || user.user_type!='admin' ) {
-        res.render('error', {user: user});
+    if (!user || user.user_type != 'admin') {
+        res.render('error', { user: user });
     } else {
-        if( !item ) {
-            res.render('fail', {user: user, id: id});
+        if (!item) {
+            res.render('fail', { user: user, id: id });
         } else {
-            if( IsNewItem(item.product_name, item.price, item.category, item.description )) {
+            if (IsNewItem(item.product_name, item.price, item.category, item.description)) {
                 res.render('change_item', {
                     user: user,
                     item: {
@@ -277,10 +278,10 @@ app.get('/change_item/:id(\\d+)', async (req, res) => {
                         description: '',
                         category: ''
                     },
-                    message: ''                    
+                    message: ''
                 });
             } else {
-                res.render('change_item', {user: user, item: item, message: ''});
+                res.render('change_item', { user: user, item: item, message: '' });
             }
         }
     }
@@ -289,11 +290,11 @@ app.get('/change_item/:id(\\d+)', async (req, res) => {
 app.post('/change_item/:id(\\d+)', async (req, res) => {
     var id = req.params.id;
     var user = GetUser(req);
-    if( !user || user.user_type!='admin' ) {
-        res.render('error', {user: user});
+    if (!user || user.user_type != 'admin') {
+        res.render('error', { user: user });
     } else {
         var [product_name, price, description, category, photo] = [req.body.product_name, req.body.price, req.body.description, req.body.category, req.body.photo];
-        if( !product_name || !price || !description || !category ) {
+        if (!product_name || !price || !description || !category) {
             res.render('change_item', {
                 user: user,
                 item: {
@@ -320,61 +321,61 @@ app.post('/change_item/:id(\\d+)', async (req, res) => {
 
 app.post('/upload_photo/:id(\\d+)', upload.single('photo'), async (req, res) => {
     var user = GetUser(req);
-    if( !user || user.user_type!='admin' ) {
-        res.render('error', {user: user});
+    if (!user || user.user_type != 'admin') {
+        res.render('error', { user: user });
     } else {
         var id = req.params.id;
         var item = (await db.items_repo.retrieve(id))[0];
         var path = req.file.path;
         path = path.replace('static/', '');
-        await db.items_repo.update(id,item.product_name, item.price,item.category,item.description,path);
-        res.redirect('/change_item/'+id);
+        await db.items_repo.update(id, item.product_name, item.price, item.category, item.description, path);
+        res.redirect('/change_item/' + id);
     }
 });
 
 app.post('/items/add_item', async (req, res) => {
     var user = GetUser(req);
-    if( !user || user.user_type!='admin' ) {
-        res.render('error', {user: user});
+    if (!user || user.user_type != 'admin') {
+        res.render('error', { user: user });
     } else {
         var id = await db.items_repo.insert('PRODUCT_NAME', 1, 'other', '');
-        res.redirect('/change_item/'+id);
-    }    
+        res.redirect('/change_item/' + id);
+    }
 });
 
 app.post('/items/delete_item/:id(\\d+)', async (req, res) => {
     var user = GetUser(req);
-    if( !user || user.user_type!='admin' ) {
-        res.render('error', {user: user});
+    if (!user || user.user_type != 'admin') {
+        res.render('error', { user: user });
     } else {
         var id = req.params.id;
         var item = await db.items_repo.retrieve(id);
-        
-        if( !item ){
-            res.render('fail', {user: user, id: id});
+
+        if (!item) {
+            res.render('fail', { user: user, id: id });
         } else {
             await db.common_repo.remove_item(id);
             res.redirect('/items');
         }
-    }    
+    }
 });
 
 app.get('/cart', async (req, res) => {
     var user = GetUser(req);
-    if( !user || user.user_type != 'user' ) {
-        res.render('error', {user: user});
+    if (!user || user.user_type != 'user') {
+        res.render('error', { user: user });
     } else {
         var cart = await GetCart(user.login);
         var [items, total, cnt] = [cart.cart, cart.total, cart.cnt];
-        res.render('cart', {user: user, items: items, total: total, cnt: cnt});
+        res.render('cart', { user: user, items: items, total: total, cnt: cnt });
     }
 });
 
 app.post('/cart/delete_item/:id(\\d+)', async (req, res) => {
     var user = GetUser(req);
     var id = req.params.id;
-    if( !user || user.user_type!='user' ) {
-        res.render('error', {user: user});
+    if (!user || user.user_type != 'user') {
+        res.render('error', { user: user });
     } else {
         await db.common_repo.remove_from_cart(user.login, id);
         res.redirect('/cart');
@@ -383,8 +384,8 @@ app.post('/cart/delete_item/:id(\\d+)', async (req, res) => {
 
 app.post('/submit_order', async (req, res) => {
     var user = GetUser(req);
-    if( !user || user.user_type!='user' ){
-         res.render('error', {user: user});
+    if (!user || user.user_type != 'user') {
+        res.render('error', { user: user });
     } else {
         await db.common_repo.submit_order(user.login);
         res.redirect('/cart');
@@ -393,29 +394,41 @@ app.post('/submit_order', async (req, res) => {
 
 app.get('/orders', async (req, res) => {
     var user = GetUser(req);
-    if( !user || user.user_type!='admin' ) {
-        res.render('error', {user: user});
+    if (!user || user.user_type != 'admin') {
+        res.render('error', { user: user });
     } else {
         var orders = await db.orders_repo.view_orders();
-        res.render('orders', {user: user, orders: orders});
+        res.render('orders', { user: user, orders: orders });
     }
 });
 
 app.get('/users', async (req, res) => {
     var user = GetUser(req);
-    if( !user || user.user_type!='admin' ) {
-        res.render('error', {user: user});
+    if (!user || user.user_type != 'admin') {
+        res.render('error', { user: user });
     } else {
         var users = await db.users_repo.view_users();
-        res.render('users', {user: user, users: users});
+        res.render('users', { user: user, users: users, search: ''});
     }
 });
 
-app.use((req,res,next) => {
+app.post('/users', async (req, res) => {
+    var user = GetUser(req);
+    if (!user || user.user_type != 'admin') {
+        res.render('error', { user: user });
+    } else {
+        var search = req.body.search;
+        // var usertype = req.body.usertype;
+        var users = await db.users_repo.view_users(search, null);
+        res.render('users', { user: user, search: search, users: users });
+    }
+})
+
+app.use((req, res, next) => {
     var user = GetUser(req);
     res.render('404.ejs', { user: user, url: req.url });
 });
 
-http.createServer( app ).listen( 3000 );
-console.log( 'started' );
+http.createServer(app).listen(3000);
+console.log('started');
 

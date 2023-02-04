@@ -47,7 +47,6 @@ class UserRepository {
                 return null;
             }
             else {
-                // TODO hash password and add it to passwords table 
                 var result = await pool.query('insert into users (login, user_name, user_surname, user_type, cur_order_id) values ($1, $2, $3, $4, $5)', [login, user_name, user_surname, user_type, cur_order_id]);
                 return login;
             }
@@ -149,10 +148,24 @@ class UserRepository {
             throw err;
         }
     }
-    async view_users() {
+    async view_users(text = null, usrtype = null) {
         try {
-            var res = await pool.query('select user_type, login, user_name, user_surname from users order by user_type DESC');
-            return res.rows;
+            // if (text && usrtype) {
+            //     var res = await pool.query('select user_type, login, user_name, user_surname from users where login like $1 or user_name like $1 or user_surname like $1 and user_type=$2', ["%"+text+"%", usrtype]);
+            // return res.rows;
+            // }
+            if(text){
+                var res = await pool.query('select user_type, login, user_name, user_surname from users where login like $1 or user_name like $1 or user_surname like $1 order by user_type desc', ["%"+text+"%"]);
+                return res.rows;
+            }
+            // else if(usrtype){
+            //     var res = await pool.query('select user_type, login, user_name, user_surname from users where user_type=$1', [usrtype]);
+            // return res.rows;
+            // }
+            else {
+                var res = await pool.query('select user_type, login, user_name, user_surname from users order by user_type DESC');
+                return res.rows;
+            }
         }
         catch (err) {
             console.log(err);
@@ -193,7 +206,7 @@ class ItemRepository {
                 var result = await pool.query('select * from items where id = $1', [id]);
             }
             else if (text) {
-                var result = await pool.query("select * from items where product_name like $1 or description like $1", ["%"+text+"%"]);
+                var result = await pool.query("select * from items where product_name like $1 or description like $1", ["%" + text + "%"]);
             }
             else {
                 var result = await pool.query('select * from items');
@@ -246,7 +259,7 @@ class ItemRepository {
             throw err;
         }
     }
-    async remove(id){
+    async remove(id) {
         try {
             var res = await pool.query('delete from items where id=$1 returning *', [id]);
             return res.rows;
@@ -388,7 +401,7 @@ class ItemOrderRepository {
 
     async remove(id, item_id = null) {
         try {
-            if( id ) {
+            if (id) {
                 var res = await pool.query('delete from item_order where id=$1 returning *', [id]);
             } else {
                 var res = await pool.query('delete from item_order where item_id=$1 returning *', [item_id]);
@@ -536,7 +549,7 @@ class CommonRepository {
 
     async remove_item(id) {
         try {
-            var res = await item_order_repo.remove(null,id);
+            var res = await item_order_repo.remove(null, id);
             var resItem = await items_repo.remove(id);
 
         } catch (err) {
