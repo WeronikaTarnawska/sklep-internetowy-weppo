@@ -219,6 +219,17 @@ app.post('/items', async (req, res) => {
     res.render('items', {user: user, search: search, items: items})
 });
 
+app.get('/items/:id', async (req, res) => {
+    var id = req.params.id;
+    var user = GetUser(req);
+    var item = (await db.items_repo.retrieve(id))[0];
+    if( !item ) {
+        res.render( 'fail', {user: user} );
+    } else {
+        res.render( 'view_item', {user: user, item:item});
+    }
+})
+
 app.post('/items/add_to_cart/:id', async (req, res) => {
     var id = req.params.id;
     console.log(id);
