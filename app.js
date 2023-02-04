@@ -266,7 +266,7 @@ app.get('/change_item/:id', async (req, res) => {
 app.post('/change_item/:id', async (req, res) => {
     var id = req.params.id;
     var user = GetUser(req);
-    var [product_name, price, description, category] = [req.body.product_name, req.body.price, req.body.description, req.body.category];
+    var [product_name, price, description, category, photo] = [req.body.product_name, req.body.price, req.body.description, req.body.category, req.body.photo];
     if( !product_name || !price || !description || !category ) {
         res.render('change_item', {
             user: user,
@@ -275,7 +275,8 @@ app.post('/change_item/:id', async (req, res) => {
                 product_name: product_name,
                 price: price,
                 description: description,
-                category: category
+                category: category,
+                photo: photo
             },
             message: 'Uzupełnij wszystkie pola'
         });
@@ -293,9 +294,10 @@ app.post('/change_item/:id', async (req, res) => {
 app.post('/upload_photo/:id', upload.single('photo'), async (req, res) => {
     var id = req.params.id;
     var item = (await db.items_repo.retrieve(id))[0];
-    console.log(item);
-    await db.items_repo.update(id,item.product_name, item.price,item.category,item.description,req.file.path);
-    res.redirect('/');
+    var path = req.file.path;
+    path = path.replace('static/', '');
+    await db.items_repo.update(id,item.product_name, item.price,item.category,item.description,path);
+    res.redirect('/change_item/'+id);
 });
 
 app.post('/items/add_item', async (req, res) => {
