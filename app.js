@@ -164,40 +164,45 @@ app.post('/sign_in', async (req, res) => {
     var login = req.body.login;
     var password = req.body.password;
     var confirmPassword = req.body.confirmPassword;
-    if( !name || !surname || !login || !password || !confirmPassword ){
-        res.render('sign_in', {
-            name: name, 
-            surname: surname, 
-            login: login, 
-            password: password, 
-            confirmPassword: confirmPassword, 
-            message: "Uzupełnij wszystkie pola."});
-    }
-    else if(await LoginAlreadyExists( login ) ) {
-        res.render('sign_in', {
-            name: name, 
-            surname: surname, 
-            login: login, 
-            password: password, 
-            confirmPassword: confirmPassword, 
-            message: "Podany login jest już zajęty."});
-    } else if( password != confirmPassword ) {
-        res.render('sign_in', {
-            name: name, 
-            surname: surname, 
-            login: login, 
-            password: password, 
-            confirmPassword: confirmPassword, 
-            message: "Podane hasła są różne."});
+    var user = GetUser(req);
+    if( user ){
+        res.redirect('/');
     } else {
-        await AddUserToDatabase( name, surname, login, password );
-        res.render('sign_in', {
-            name: '', 
-            surname: '',    
-            login: '', 
-            password: '', 
-            confirmPassword: '', 
-            message: "Zarejestrowano pomyślnie. Zaloguj się, aby kontynuować."});
+        if( !name || !surname || !login || !password || !confirmPassword ){
+            res.render('sign_in', {
+                name: name, 
+                surname: surname, 
+                login: login, 
+                password: password, 
+                confirmPassword: confirmPassword, 
+                message: "Uzupełnij wszystkie pola."});
+        }
+        else if(await LoginAlreadyExists( login ) ) {
+            res.render('sign_in', {
+                name: name, 
+                surname: surname, 
+                login: login, 
+                password: password, 
+                confirmPassword: confirmPassword, 
+                message: "Podany login jest już zajęty."});
+        } else if( password != confirmPassword ) {
+            res.render('sign_in', {
+                name: name, 
+                surname: surname, 
+                login: login, 
+                password: password, 
+                confirmPassword: confirmPassword, 
+                message: "Podane hasła są różne."});
+        } else {
+            await AddUserToDatabase( name, surname, login, password );
+            res.render('sign_in', {
+                name: '', 
+                surname: '',    
+                login: '', 
+                password: '', 
+                confirmPassword: '', 
+                message: "Zarejestrowano pomyślnie. Zaloguj się, aby kontynuować."});
+        }
     }
 });
 
@@ -232,17 +237,24 @@ app.get('/items/:id', async (req, res) => {
 
 app.post('/items/add_to_cart/:id', async (req, res) => {
     var id = req.params.id;
-    console.log(id);
     var user = GetUser(req);
-    await db.common_repo.add_to_cart(user.login, id);
-    var items = await db.items_repo.retrieve();
-    res.redirect('/items');
+    if( !user || user.user_type!='user' ) {
+        res.render('error');
+    } else {
+        await db.common_repo.add_to_cart(user.login, id);
+        var items = await db.items_repo.retrieve();
+        res.redirect('/items');
+    }
 });
 
 app.post('/items/change_item/:id', (req, res) => {
     var id = req.params.id;
     var user = GetUser(req);
-    res.redirect('/change_item/'+id);
+    if( !user || user.user_type!='admin' ) {
+        res.render('error', {user: user});
+    } else {
+        res.redirect('/change_item/'+id);
+    }
 });
 
 app.get('/change_item/:id', async (req, res) => {
@@ -277,56 +289,74 @@ app.get('/change_item/:id', async (req, res) => {
 app.post('/change_item/:id', async (req, res) => {
     var id = req.params.id;
     var user = GetUser(req);
-    var [product_name, price, description, category, photo] = [req.body.product_name, req.body.price, req.body.description, req.body.category, req.body.photo];
-    if( !product_name || !price || !description || !category ) {
-        res.render('change_item', {
-            user: user,
-            item: {
-                id: id,
-                product_name: product_name,
-                price: price,
-                description: description,
-                category: category,
-                photo: photo
-            },
-            message: 'Uzupełnij wszystkie pola'
-        });
+    if( !user || user.user_type!='admin' ) {
+        res.render('error', {user: user});
     } else {
-        var update = await db.items_repo.update(id, product_name, price, category, description);
-        var updated = (await db.items_repo.retrieve(update))[0];
-        res.render('change_item', {
-            user: user,
-            item: updated,
-            message: ''
-        });
+        var [product_name, price, description, category, photo] = [req.body.product_name, req.body.price, req.body.description, req.body.category, req.body.photo];
+        if( !product_name || !price || !description || !category ) {
+            res.render('change_item', {
+                user: user,
+                item: {
+                    id: id,
+                    product_name: product_name,
+                    price: price,
+                    description: description,
+                    category: category,
+                    photo: photo
+                },
+                message: 'Uzupełnij wszystkie pola'
+            });
+        } else {
+            var update = await db.items_repo.update(id, product_name, price, category, description);
+            var updated = (await db.items_repo.retrieve(update))[0];
+            res.render('change_item', {
+                user: user,
+                item: updated,
+                message: ''
+            });
+        }
     }
 });
 
 app.post('/upload_photo/:id', upload.single('photo'), async (req, res) => {
-    var id = req.params.id;
-    var item = (await db.items_repo.retrieve(id))[0];
-    var path = req.file.path;
-    path = path.replace('static/', '');
-    await db.items_repo.update(id,item.product_name, item.price,item.category,item.description,path);
-    res.redirect('/change_item/'+id);
+    var user = GetUser(req);
+    if( !user || user.user_type!='admin' ) {
+        res.render('error', {user: user});
+    } else {
+        var id = req.params.id;
+        var item = (await db.items_repo.retrieve(id))[0];
+        var path = req.file.path;
+        path = path.replace('static/', '');
+        await db.items_repo.update(id,item.product_name, item.price,item.category,item.description,path);
+        res.redirect('/change_item/'+id);
+    }
 });
 
 app.post('/items/add_item', async (req, res) => {
     var user = GetUser(req);
-    var id = await db.items_repo.insert('PRODUCT_NAME', 1, 'other', '');
-    res.redirect('/change_item/'+id)
+    if( !user || user.user_type!='admin' ) {
+        res.render('error', {user: user});
+    } else {
+        var id = await db.items_repo.insert('PRODUCT_NAME', 1, 'other', '');
+        res.redirect('/change_item/'+id);
+    }    
 });
 
 app.post('/items/delete_item/:id', async (req, res) => {
-    var id = req.params.id;
-    var item = await db.items_repo.retrieve(id);
     var user = GetUser(req);
-    if( !item ){
-        res.render('fail', {user: user});
+    if( !user || user.user_type!='admin' ) {
+        res.render('error', {user: user});
     } else {
-        await db.items_repo.remove(id);
-        res.redirect('/items');
-    }
+        var id = req.params.id;
+        var item = await db.items_repo.retrieve(id);
+        
+        if( !item ){
+            res.render('fail', {user: user});
+        } else {
+            await db.items_repo.remove(id);
+            res.redirect('/items');
+        }
+    }    
 });
 
 app.get('/cart', async (req, res) => {
