@@ -351,9 +351,24 @@ class ItemOrderRepository {
             throw err;
         }
     }
-    async remove(id) {
+    // async remove(id) {
+    //     try {
+    //         var res = await pool.query('delete from item_order where id=$1 returning *', [id]);
+    //         return res.rows;
+    //     }
+    //     catch (err) {
+    //         console.log(err);
+    //         throw err;
+    //     }
+    // }
+
+    async remove(id, item_id = null) {
         try {
-            var res = await pool.query('delete from item_order where id=$1 returning *', [id]);
+            if( id ) {
+                var res = await pool.query('delete from item_order where id=$1 returning *', [id]);
+            } else {
+                var res = await pool.query('delete from item_order where item_id=$1 returning *', [item_id]);
+            }
             return res.rows;
         }
         catch (err) {
@@ -361,6 +376,7 @@ class ItemOrderRepository {
             throw err;
         }
     }
+
     async countitems(order_id) {
         try {
             var res = await pool.query('select count(id) as cnt from item_order where order_id=$1 group by order_id', [order_id]);
@@ -407,7 +423,7 @@ class PasswordRepository {
     }
 }
 
-/* operations that require manipulating multiple tables: add_user, add_to_cart, remove_from_cart, submit_order */
+/* operations that require manipulating multiple tables: add_user, add_to_cart, remove_from_cart, submit_order, remove_item */
 class CommonRepository {
 
     async add_user(login, password, user_name, user_surname, user_type, cur_order_id = null) {
@@ -469,6 +485,17 @@ class CommonRepository {
             await users_repo.update_cur_order(user_login, null);
         }
         catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
+
+    async remove_item(id) {
+        try {
+            var res = await item_order_repo.remove(null,id);
+            var resItem = await items_repo.remove(id);
+
+        } catch (err) {
             console.log(err);
             throw err;
         }
