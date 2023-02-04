@@ -42,7 +42,11 @@
                     </div>
                 <% } %>
     
-                <input type="submit" value="Zapisz">
+                <input type="submit" value="Zapisz" style="text-align: center; margin-left: auto; margin-right: auto;"">
+            </form>
+
+            <form action="/items/delete_item/<%=item.id%>" method="post">
+                <input type="submit" value="Usuń przedmiot" style="text-align: center; margin-left: auto; margin-right: auto;"/>
             </form>
         </div>
 

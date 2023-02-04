@@ -53,6 +53,7 @@
                         <th>Do koszyka</th>
                     <% } else { %>
                         <th>Edycja</th>
+                        <th>Usuwanie</th>
                     <% }
                 } %>
             </tr>
@@ -74,6 +75,11 @@
                             <td>
                                 <form action="/items/change_item/<%=id%>" method="post">
                                     <button class="mybutton" style="font-size:24px" id="editbtn<%=id%>">Edytuj <i class="material-icons">mode_edit</i></button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="/items/delete_item/<%=id%>" method="post">
+                                    <button class="mybutton" style="font-size:24px" id="dltbtn<%=id%>">Usuń<i class="material-icons">delete</i></button>
                                 </form>
                             </td>
                         <% }
