@@ -235,6 +235,7 @@ table.items tr:hover {
     padding: 5px;
     border-radius: 1px;
     cursor: pointer;
+    text-align: center;
 }
 
 .myheader {

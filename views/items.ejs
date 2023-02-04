@@ -73,12 +73,12 @@
                             </td>
                         <% } else { %>
                             <td>
-                                <form action="/items/change_item/<%=id%>" method="post">
+                                <form action="/items/change_item/<%=id%>" method="post" style="text-align: center;">
                                     <button class="mybutton" style="font-size:24px" id="editbtn<%=id%>">Edytuj <i class="material-icons">mode_edit</i></button>
                                 </form>
                             </td>
                             <td>
-                                <form action="/items/delete_item/<%=id%>" method="post">
+                                <form action="/items/delete_item/<%=id%>" method="post" style="text-align: center;">
                                     <button class="mybutton" style="font-size:24px" id="dltbtn<%=id%>">Usuń<i class="material-icons">delete</i></button>
                                 </form>
                             </td>
