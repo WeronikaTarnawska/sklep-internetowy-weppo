@@ -341,6 +341,30 @@ class ItemOrderRepository {
     constructor(pool) {
         this.pool = pool;
     }
+    async retrieve(id, item_id = null, order_id = null) {
+        try {
+            if (id) {
+                var result = await pool.query('select * from item_order where id = $1', [id]);
+            }
+            else if (item_id && order_id) {
+                var result = await pool.query('select * from item_order where item_id = $1 and order_id = $2', [item_id, order_id]);
+            }
+            else if (item_id) {
+                var result = await pool.query('select * from item_order where item_id = $1', [item_id]);
+            }
+            else if (order_id) {
+                var result = await pool.query('select * from item_order where order_id = $1', [order_id]);
+            }
+            else {
+                var result = await pool.query('select * from item_order');
+            }
+            return result.rows;
+        }
+        catch (err) {
+            console.log(err);
+            return [];
+        }
+    }
     async insert(item, order) {
         try {
             var result = await pool.query('insert into item_order (item_id, order_id) values ($1, $2) returning id', [item, order]);
@@ -458,17 +482,37 @@ class CommonRepository {
         }
     }
 
-    async remove_from_cart(user_login, instance) {
+    // async remove_from_cart(user_login, instance) {
+    //     try {
+    //         var res = await item_order_repo.remove(instance);
+    //         var order_id = res[0].order_id;
+    //         // res = await orders_repo.retrieve(order_id);/** */
+    //         // var user_login = res[0].user_id;/** */
+    //         var cnt = await item_order_repo.countitems(order_id);
+    //         if (cnt == 0) {
+    //             /* cart is empty */
+    //             await users_repo.update_cur_order(user_login, null);
+    //             order = await orders_repo.remove(order_id);
+    //         }
+    //     }
+    //     catch (err) {
+    //         console.log(err);
+    //         throw err;
+    //     }
+    // }
+
+    async remove_from_cart(user_login, item_id) {
         try {
-            var res = await item_order_repo.remove(instance);
-            var order_id = res[0].order_id;
-            // res = await orders_repo.retrieve(order_id);/** */
-            // var user_login = res[0].user_id;/** */
+            var user = (await users_repo.retrieve(user_login))[0];
+            var order_id = user.cur_order_id;
+            var res = (await item_order_repo.retrieve(null, item_id, order_id))[0];
+            var item_order_id = res.id;
+            await item_order_repo.remove(item_order_id);
             var cnt = await item_order_repo.countitems(order_id);
             if (cnt == 0) {
                 /* cart is empty */
                 await users_repo.update_cur_order(user_login, null);
-                order = await orders_repo.remove(order_id);
+                await orders_repo.remove(order_id);
             }
         }
         catch (err) {
