@@ -408,7 +408,7 @@ app.get('/users', async (req, res) => {
         res.render('error', { user: user });
     } else {
         var users = await db.users_repo.view_users();
-        res.render('users', { user: user, users: users, search: ''});
+        res.render('users', { user: user, users: users, search: '', usertype:''});
     }
 });
 
@@ -418,9 +418,9 @@ app.post('/users', async (req, res) => {
         res.render('error', { user: user });
     } else {
         var search = req.body.search;
-        // var usertype = req.body.usertype;
-        var users = await db.users_repo.view_users(search, null);
-        res.render('users', { user: user, search: search, users: users });
+        var usertype = req.body.usertype;
+        var users = await db.users_repo.view_users(search, usertype);
+        res.render('users', { user: user, search: search, users: users, usertype: usertype});
     }
 })
 

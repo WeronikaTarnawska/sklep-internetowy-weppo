@@ -150,18 +150,18 @@ class UserRepository {
     }
     async view_users(text = null, usrtype = null) {
         try {
-            // if (text && usrtype) {
-            //     var res = await pool.query('select user_type, login, user_name, user_surname from users where login like $1 or user_name like $1 or user_surname like $1 and user_type=$2', ["%"+text+"%", usrtype]);
-            // return res.rows;
-            // }
-            if(text){
-                var res = await pool.query('select user_type, login, user_name, user_surname from users where login like $1 or user_name like $1 or user_surname like $1 order by user_type desc', ["%"+text+"%"]);
+            if (text && usrtype) {
+                var res = await pool.query('select user_type, login, user_name, user_surname from users where login like $1 or user_name like $1 or user_surname like $1 and user_type=$2', ["%" + text + "%", usrtype]);
                 return res.rows;
             }
-            // else if(usrtype){
-            //     var res = await pool.query('select user_type, login, user_name, user_surname from users where user_type=$1', [usrtype]);
-            // return res.rows;
-            // }
+            if (text) {
+                var res = await pool.query('select user_type, login, user_name, user_surname from users where login like $1 or user_name like $1 or user_surname like $1 order by user_type desc', ["%" + text + "%"]);
+                return res.rows;
+            }
+            else if (usrtype) {
+                var res = await pool.query('select user_type, login, user_name, user_surname from users where user_type=$1', [usrtype]);
+                return res.rows;
+            }
             else {
                 var res = await pool.query('select user_type, login, user_name, user_surname from users order by user_type DESC');
                 return res.rows;
