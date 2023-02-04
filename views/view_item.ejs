@@ -40,7 +40,13 @@
 
             <label for="category">Kategoria</label>
             <p id="category" name="category" class="loginboxtext">
-                <%= item.category %>
+                <% const dict = {
+                    't-shirt': 'Koszulka',
+                    'mug': 'Kubek',
+                    'sweatshirt': 'Bluza',
+                    'other': 'Inne'
+                }; %>
+                <%= dict[item.category] %>
             </p>
 
             <% if( user && user.user_type=='user' ) { %>
