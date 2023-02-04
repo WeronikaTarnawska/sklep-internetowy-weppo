@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>Koszyk</title>
 </head>
 <body>
@@ -29,6 +30,7 @@
             <th>Więcej</th>
             <th>Liczba</th>
             <th>Kwota</th>
+            <th>Usuń z koszyka</th>
         </tr>
         <% items.forEach(r => { %>
             <tr>
@@ -37,6 +39,11 @@
                 <td><a style="color: darkblue;" href="/items/<%=id%>">Opis</a></td>
                 <td> <%= r.cnt %> </td>
                 <td><%= r.sum %></td>
+                <td>
+                    <form action="/cart/delete_item/<%=id%>" method="post">
+                        <button class="mybutton" style="font-size:24px" id="rmvbtn<%=id%>">Usuń <i class="material-icons">remove_shopping_cart</i></button>
+                    </form>
+                </td>
             </tr>
         <% }) %>
     </table>

@@ -370,6 +370,17 @@ app.get('/cart', async (req, res) => {
     }
 });
 
+app.post('/cart/delete_item/:id', async (req, res) => {
+    var user = GetUser(req);
+    var id = req.params.id;
+    if( !user || user.user_type!='user' ) {
+        res.render('error', {user: user});
+    } else {
+        await db.common_repo.remove_from_cart(user.login, id);
+        res.redirect('/cart');
+    }
+});
+
 app.post('/submit_order', async (req, res) => {
     var user = GetUser(req);
     if( !user || user.user_type!='user' ){
