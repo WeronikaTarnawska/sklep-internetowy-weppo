@@ -224,12 +224,12 @@ app.post('/items', async (req, res) => {
     res.render('items', {user: user, search: search, items: items})
 });
 
-app.get('/items/:id', async (req, res) => {
+app.get('/items/:id(\\d+)', async (req, res) => {
     var id = req.params.id;
     var user = GetUser(req);
     var item = (await db.items_repo.retrieve(id))[0];
     if( !item ) {
-        res.render( 'fail', {user: user} );
+        res.render( 'fail', {user: user, id: id} );
     } else {
         res.render( 'view_item', {user: user, item:item});
     }
@@ -351,7 +351,7 @@ app.post('/items/delete_item/:id', async (req, res) => {
         var item = await db.items_repo.retrieve(id);
         
         if( !item ){
-            res.render('fail', {user: user});
+            res.render('fail', {user: user, id: id});
         } else {
             await db.common_repo.remove_item(id);
             res.redirect('/items');
@@ -398,6 +398,11 @@ app.get('/users', async (req, res) => {
         var users = await db.users_repo.view_users();
         res.render('users', {user: user, users: users});
     }
+});
+
+app.use((req,res,next) => {
+    var user = GetUser(req);
+    res.render('404.ejs', { user: user, url: req.url });
 });
 
 http.createServer( app ).listen( 3000 );
