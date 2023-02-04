@@ -235,7 +235,7 @@ app.get('/items/:id(\\d+)', async (req, res) => {
     }
 })
 
-app.post('/items/add_to_cart/:id', async (req, res) => {
+app.post('/items/add_to_cart/:id(\\d+)', async (req, res) => {
     var id = req.params.id;
     var user = GetUser(req);
     if( !user || user.user_type!='user' ) {
@@ -247,7 +247,7 @@ app.post('/items/add_to_cart/:id', async (req, res) => {
     }
 });
 
-app.post('/items/change_item/:id', (req, res) => {
+app.post('/items/change_item/:id(\\d+)', (req, res) => {
     var id = req.params.id;
     var user = GetUser(req);
     if( !user || user.user_type!='admin' ) {
@@ -257,7 +257,7 @@ app.post('/items/change_item/:id', (req, res) => {
     }
 });
 
-app.get('/change_item/:id', async (req, res) => {
+app.get('/change_item/:id(\\d+)', async (req, res) => {
     var id = req.params.id;
     var user = GetUser(req);
     var item = (await db.items_repo.retrieve(id))[0];
@@ -286,7 +286,7 @@ app.get('/change_item/:id', async (req, res) => {
     }
 });
 
-app.post('/change_item/:id', async (req, res) => {
+app.post('/change_item/:id(\\d+)', async (req, res) => {
     var id = req.params.id;
     var user = GetUser(req);
     if( !user || user.user_type!='admin' ) {
@@ -318,7 +318,7 @@ app.post('/change_item/:id', async (req, res) => {
     }
 });
 
-app.post('/upload_photo/:id', upload.single('photo'), async (req, res) => {
+app.post('/upload_photo/:id(\\d+)', upload.single('photo'), async (req, res) => {
     var user = GetUser(req);
     if( !user || user.user_type!='admin' ) {
         res.render('error', {user: user});
@@ -342,7 +342,7 @@ app.post('/items/add_item', async (req, res) => {
     }    
 });
 
-app.post('/items/delete_item/:id', async (req, res) => {
+app.post('/items/delete_item/:id(\\d+)', async (req, res) => {
     var user = GetUser(req);
     if( !user || user.user_type!='admin' ) {
         res.render('error', {user: user});
@@ -370,7 +370,7 @@ app.get('/cart', async (req, res) => {
     }
 });
 
-app.post('/cart/delete_item/:id', async (req, res) => {
+app.post('/cart/delete_item/:id(\\d+)', async (req, res) => {
     var user = GetUser(req);
     var id = req.params.id;
     if( !user || user.user_type!='user' ) {
