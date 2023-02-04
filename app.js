@@ -317,6 +317,18 @@ app.post('/items/add_item', async (req, res) => {
     res.redirect('/change_item/'+id)
 });
 
+app.post('/items/delete_item/:id', async (req, res) => {
+    var id = req.params.id;
+    var item = await db.items_repo.retrieve(id);
+    var user = GetUser(req);
+    if( !item ){
+        res.render('fail', {user: user});
+    } else {
+        await db.items_repo.remove(id);
+        res.redirect('/items');
+    }
+});
+
 app.get('/cart', async (req, res) => {
     var user = GetUser(req);
     if( !user || user.user_type != 'user' ) {
