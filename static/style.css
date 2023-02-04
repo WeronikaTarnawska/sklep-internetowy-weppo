@@ -75,9 +75,10 @@ div {
 
 .loginbox input[type=text], input[type=number], input[type=password],select {
     width: 100%;
-    padding: 12px 20px;
+    padding:  10px;
     font-size: 20px;
-    margin: 8px;
+    margin-top: 19px;
+    margin-bottom: 19px;
     display: inline-block;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -96,6 +97,16 @@ div {
     cursor: pointer;
     text-decoration: none;
     font-size: 20px;
+  }
+
+  .loginbox input[type=submit]:hover {
+    background-color: darkblue;
+  }
+
+  .loginboxtext {
+    background-color: white; 
+    padding: 10px; 
+    border-radius: 5px;
   }
 
 .message {
@@ -128,6 +139,10 @@ div {
     cursor: pointer;
     text-decoration: none;
 }
+
+.registerbox a:hover {
+    background-color: darkblue;
+  }
 
 .column1 {
     float: left;
