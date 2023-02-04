@@ -35,6 +35,10 @@ values ('jan123', 'Jan', 'Kowalski', 'user', null);
 -- values ('jan123', 'supertajnehaslo');
 
 
+-- update sample photo
+update items set photo='photos/photo-1675501932824.jpeg' where id=1;
+
+
 
 -- view all carts 
 select users.login, items.product_name, items.price from users
