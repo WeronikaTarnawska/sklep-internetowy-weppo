@@ -353,7 +353,7 @@ app.post('/items/delete_item/:id', async (req, res) => {
         if( !item ){
             res.render('fail', {user: user});
         } else {
-            await db.items_repo.remove(id);
+            await db.common_repo.remove_item(id);
             res.redirect('/items');
         }
     }    
