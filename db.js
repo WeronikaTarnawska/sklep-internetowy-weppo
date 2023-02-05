@@ -151,7 +151,7 @@ class UserRepository {
     async view_users(text = null, usrtype = null) {
         try {
             if (text && usrtype) {
-                var res = await pool.query('select user_type, login, user_name, user_surname from users where login like $1 or user_name like $1 or user_surname like $1 and user_type=$2', ["%" + text + "%", usrtype]);
+                var res = await pool.query('select user_type, login, user_name, user_surname from users where (login like $1 or user_name like $1 or user_surname like $1) and user_type=$2', ["%" + text + "%", usrtype]);
                 return res.rows;
             }
             if (text) {
