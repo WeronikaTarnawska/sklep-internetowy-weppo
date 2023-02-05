@@ -30,9 +30,20 @@
         </div>
         <div style="column-count: 2; width: 40%; margin-left: 30%;">
             <select style="font-size: medium; height: 30pt; width:220pt;" name="usertype" value="<%=usertype %>">
-                <option value="">Wszyscy</option>
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
+                <% if (!usertype) { %>
+                    <option value="" selected>Wszyscy</option>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                <% } else if (usertype == 'user') { %>
+                    <option value="">Wszyscy</option>
+                    <option value="user" selected>User</option>
+                    <option value="admin">Admin</option>
+                <% } else { %>
+                    <option value="">Wszyscy</option>
+                    <option value="user">User</option>
+                    <option value="admin" selected>Admin</option>
+                <% } %>
+                
             </select>
             <button style="font-size: medium; margin-top: 14pt; height: 30pt; width:220pt;" type="submit">Szukaj</button>
         </div>
