@@ -63,7 +63,7 @@ class UserRepository {
             if (exists.rowCount > 0) {
                 if (cur_order_id != null) {
                     var order = await pool.query('select * from orders where id=$1', [cur_order_id]);
-                    console.log(order.rows[0].user_id);
+                    // console.log(order.rows[0].user_id);
                     if (order.rows[0].user_id != login) {
                         console.log("the order belongs to a different user\n");
                         return null;
@@ -449,6 +449,10 @@ class PasswordRepository {
     async validate(login, password) {
         try {
             var res = await pool.query('select * from passwords where login = $1', [login]);
+            if(res.rowCount==0){
+                console.log('no such user');
+                return false;
+            }
             var hash = res.rows[0].password;
             var ok = await bcrypt.compare(password, hash);
             return ok;
